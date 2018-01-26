@@ -59,6 +59,11 @@ public class BookControllerIT {
 		String actual = response.getHeaders().get(HttpHeaders.LOCATION).get(0);
 		assertTrue(actual.contains("api/books/5"));
 	}
+	
+	@Test
+	public void deleteBook() {
+		
+	}
 
 	private String createUrl(String uri) {
 		return LOCAL_HOST + port + uri;
