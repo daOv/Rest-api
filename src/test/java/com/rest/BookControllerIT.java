@@ -1,5 +1,7 @@
 package com.rest;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,8 +9,13 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.client.RestTemplate;
+import com.rest.model.Book;
 
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @RunWith(SpringRunner.class)
@@ -19,6 +26,8 @@ public class BookControllerIT {
 	private int port;
 
 	private static final String LOCAL_HOST = "http://localhost:";
+	
+	HttpHeaders headers = new HttpHeaders();
 
 	@Before
 	public void setUp() {
@@ -39,6 +48,16 @@ public class BookControllerIT {
 		String expected = "{\"id\":1,\"title\":\"Book\",\"description\":\"good Book\"}";
 		ResponseEntity<String> response = template.getForEntity(createUrl("api/books/1"), String.class);
 		JSONAssert.assertEquals(expected, response.getBody(), false);
+	}
+	
+	@Test
+	public void postBook() {
+		Book book = new Book(5, "Test book", "test");
+		HttpEntity <Book> entity = new HttpEntity<Book>(book,headers);
+		ResponseEntity<String> response = template.exchange(createUrl("/api/books"), 
+				HttpMethod.POST,entity,String.class);
+		String actual = response.getHeaders().get(HttpHeaders.LOCATION).get(0);
+		assertTrue(actual.contains("api/books/5"));
 	}
 
 	private String createUrl(String uri) {
