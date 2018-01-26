@@ -60,19 +60,14 @@ public class Book {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
-	public Integer getBookCategory() {
-		return bookCategory.getId();
+	
+	public BookCategory getBookCategory() {
+		return bookCategory;
 	}
 
 	public void setBookCategory(BookCategory bookCategory) {
 		this.bookCategory = bookCategory;
 	}
 
-	@Override
-	public String toString() {
-		String result = String.format("Book[id=%d, title='%s',description='%s',bookCategory='%s']%n", id, title,
-				description, getBookCategory());
-		return result;
-	}
+	
 }
