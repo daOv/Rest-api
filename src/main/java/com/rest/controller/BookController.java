@@ -71,7 +71,6 @@ public class BookController {
 		currentBook.setId(id);
 		currentBook.setDescription(book.getDescription());
 		currentBook.setTitle(book.getTitle());
-		currentBook.setBookCategory(book.getBookCategory());
 		bookService.saveBook(currentBook);
 
 		return new ResponseEntity<Book>(currentBook, HttpStatus.OK);

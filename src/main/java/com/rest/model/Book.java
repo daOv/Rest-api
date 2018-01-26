@@ -61,8 +61,8 @@ public class Book {
 		this.description = description;
 	}
 
-	public BookCategory getBookCategory() {
-		return bookCategory;
+	public Integer getBookCategory() {
+		return bookCategory.getId();
 	}
 
 	public void setBookCategory(BookCategory bookCategory) {
