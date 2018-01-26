@@ -8,7 +8,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
-
 @Entity
 public class Book {
 	@Id
@@ -31,13 +30,12 @@ public class Book {
 		this.description = description;
 		this.bookCategory = bookCategory;
 	}
-	
+
 	public Book(int id, String title, String description) {
 		this.id = id;
 		this.title = title;
 		this.description = description;
 	}
-
 
 	public int getId() {
 		return id;
@@ -63,7 +61,6 @@ public class Book {
 		this.description = description;
 	}
 
-	
 	public BookCategory getBookCategory() {
 		return bookCategory;
 	}
@@ -78,4 +75,4 @@ public class Book {
 				description, getBookCategory());
 		return result;
 	}
-	}
+}

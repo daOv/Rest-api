@@ -60,18 +60,21 @@ public class BookController {
 		bookService.deleteBook(id);
 		return new ResponseEntity<BookCategory>(HttpStatus.NO_CONTENT);
 	}
+
 	@RequestMapping(value = "/books/{id}", method = RequestMethod.PUT)
 	public ResponseEntity<?> updateBook(@RequestBody Book book, @PathVariable("id") Integer id) {
 		Book currentBook = bookService.getBookById(id);
 		if (currentBook == null) {
-			return new ResponseEntity(
-					new CustomErrorType("Unable to upate. Book with id " + id + " not found."),
+			return new ResponseEntity(new CustomErrorType("Unable to upate. Book with id " + id + " not found."),
 					HttpStatus.NOT_FOUND);
 		}
+		currentBook.setId(id);
 		currentBook.setDescription(book.getDescription());
 		currentBook.setTitle(book.getTitle());
 		currentBook.setBookCategory(book.getBookCategory());
+		bookService.saveBook(currentBook);
+
 		return new ResponseEntity<Book>(currentBook, HttpStatus.OK);
 	}
-	
+
 }

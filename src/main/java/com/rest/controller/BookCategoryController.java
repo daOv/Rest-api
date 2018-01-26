@@ -64,7 +64,8 @@ public class BookCategoryController {
 	}
 
 	@RequestMapping(value = "/bookCategory/{id}", method = RequestMethod.PUT)
-	public ResponseEntity<?> updateBookCategory(@RequestBody BookCategory bookCategoryDetails, @PathVariable("id") Integer id) {
+	public ResponseEntity<?> updateBookCategory(@RequestBody BookCategory bookCategoryDetails,
+			@PathVariable("id") Integer id) {
 		BookCategory category = bookCategoryService.getCategoryById(id);
 		if (category == null) {
 			return new ResponseEntity(

@@ -1,7 +1,9 @@
 package com.rest;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,10 +14,12 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 import com.rest.model.Book;
+import com.rest.repositroy.BookRepository;
 
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @RunWith(SpringRunner.class)
@@ -26,7 +30,7 @@ public class BookControllerIT {
 	private int port;
 
 	private static final String LOCAL_HOST = "http://localhost:";
-	
+
 	HttpHeaders headers = new HttpHeaders();
 
 	@Before
@@ -49,20 +53,32 @@ public class BookControllerIT {
 		ResponseEntity<String> response = template.getForEntity(createUrl("api/books/1"), String.class);
 		JSONAssert.assertEquals(expected, response.getBody(), false);
 	}
-	
+
 	@Test
 	public void postBook() {
 		Book book = new Book(5, "Test book", "test");
-		HttpEntity <Book> entity = new HttpEntity<Book>(book,headers);
-		ResponseEntity<String> response = template.exchange(createUrl("/api/books"), 
-				HttpMethod.POST,entity,String.class);
+		HttpEntity<Book> entity = new HttpEntity<Book>(book, headers);
+		ResponseEntity<String> response = template.exchange(createUrl("/api/books"), HttpMethod.POST, entity,
+				String.class);
 		String actual = response.getHeaders().get(HttpHeaders.LOCATION).get(0);
 		assertTrue(actual.contains("api/books/5"));
 	}
-	
+
 	@Test
-	public void deleteBook() {
-		
+	public void deleteBook() throws JSONException {
+		template.delete(createUrl("/api/books/5"));
+		ResponseEntity<String> response = template.getForEntity(createUrl("api/books/5"), String.class);
+		String expected = "{\"errorMessage\":\"Book with id 5 not found.\"}";
+		JSONAssert.assertEquals(expected, response.getBody(), false);
+	}
+
+	@Test
+	public void updateBook() throws JSONException {
+		Book book = new Book(1, "Test book", "test");
+		template.put(createUrl("api/books/2"), book);
+		ResponseEntity<String> response = template.getForEntity(createUrl("api/books/2"), String.class);
+		String expected = "	{\"id\": 2,\"title\": \"Test book\",\"description\": \"test\"}";
+		JSONAssert.assertEquals(expected, response.getBody(), false);
 	}
 
 	private String createUrl(String uri) {
