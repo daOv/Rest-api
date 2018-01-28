@@ -1,8 +1,6 @@
 package com.rest;
 
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,12 +12,9 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.client.RestTemplate;
 import com.rest.model.Book;
-import com.rest.repositroy.BookRepository;
 
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @RunWith(SpringRunner.class)

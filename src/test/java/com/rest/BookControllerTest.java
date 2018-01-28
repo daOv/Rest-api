@@ -1,7 +1,6 @@
 package com.rest;
 
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import java.util.Arrays;
 import java.util.List;
@@ -58,8 +57,4 @@ public class BookControllerTest {
 		JSONAssert.assertEquals(expected, result.getResponse().getContentAsString(), false);
 	}
 	
-	@Test
-	public void CreateBooks() throws Exception {
-	  
-	}
 }
