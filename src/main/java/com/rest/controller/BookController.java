@@ -2,6 +2,8 @@ package com.rest.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -62,8 +64,9 @@ public class BookController {
 	}
 
 	@RequestMapping(value = "/books/{id}", method = RequestMethod.PUT)
-	public ResponseEntity<?> updateBook(@RequestBody Book book, @PathVariable("id") Integer id) {
+	public ResponseEntity<?> updateBook(@Valid @RequestBody Book book, @PathVariable("id") Integer id) {
 		Book currentBook = bookService.getBookById(id);
+		BookCategory currentCategory = currentBook.getBookCategory();
 		if (currentBook == null) {
 			return new ResponseEntity(new CustomErrorType("Unable to upate. Book with id " + id + " not found."),
 					HttpStatus.NOT_FOUND);
@@ -71,9 +74,14 @@ public class BookController {
 		currentBook.setId(id);
 		currentBook.setDescription(book.getDescription());
 		currentBook.setTitle(book.getTitle());
-		bookService.saveBook(currentBook);
+		if (book.getBookCategory().getId() != 0) {
+			currentCategory.setId(book.getBookCategory().getId());
+		}
+		if (!book.getBookCategory().getName().equals(null)) {
+			currentCategory.setName(book.getBookCategory().getName());
+		}
 
+		bookService.saveBook(currentBook);
 		return new ResponseEntity<Book>(currentBook, HttpStatus.OK);
 	}
-
 }

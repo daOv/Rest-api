@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class Book {
@@ -14,11 +15,14 @@ public class Book {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "book_id")
 	private int id;
+	@NotNull
 	private String title;
+	@NotNull
 	private String description;
 
+	@NotNull
 	@ManyToOne
-	@JoinColumn(name = "category_id_fk",referencedColumnName="category_id")
+	@JoinColumn(name = "category_id_fk", referencedColumnName = "category_id")
 	private BookCategory bookCategory;
 
 	public Book() {

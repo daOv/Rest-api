@@ -1,6 +1,9 @@
 package com.rest.controller;
 
 import java.util.List;
+
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -42,7 +45,7 @@ public class BookCategoryController {
 	}
 
 	@RequestMapping(value = "/bookCategory", method = RequestMethod.POST)
-	public ResponseEntity<?> addBookCategory(@RequestBody BookCategory category, UriComponentsBuilder ucBuilder) {
+	public ResponseEntity<?> addBookCategory(@Valid @RequestBody BookCategory category, UriComponentsBuilder ucBuilder) {
 		bookCategoryService.saveCategory(category);
 		HttpHeaders headers = new HttpHeaders();
 		headers.setLocation(ucBuilder.path("/api/bookCategory/{id}").buildAndExpand(category.getId()).toUri());
