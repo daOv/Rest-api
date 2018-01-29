@@ -2,13 +2,11 @@ package com.rest.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 public class Book {
@@ -20,7 +18,7 @@ public class Book {
 	private String description;
 
 	@ManyToOne
-	@JoinColumn(name = "category_id", foreignKey = @ForeignKey(name = "category_id_fk"))
+	@JoinColumn(name = "category_id_fk",referencedColumnName="category_id")
 	private BookCategory bookCategory;
 
 	public Book() {
