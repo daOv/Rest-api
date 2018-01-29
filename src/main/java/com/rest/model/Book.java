@@ -1,6 +1,8 @@
 package com.rest.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,12 +14,13 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 public class Book {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "book_id")
 	private int id;
 	private String title;
 	private String description;
-	@JsonBackReference
+
 	@ManyToOne
-	@JoinColumn(name = "book_category_id")
+	@JoinColumn(name = "category_id", foreignKey = @ForeignKey(name = "category_id_fk"))
 	private BookCategory bookCategory;
 
 	public Book() {
@@ -60,7 +63,7 @@ public class Book {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
 	public BookCategory getBookCategory() {
 		return bookCategory;
 	}
@@ -69,5 +72,4 @@ public class Book {
 		this.bookCategory = bookCategory;
 	}
 
-	
 }
