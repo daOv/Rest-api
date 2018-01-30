@@ -31,6 +31,7 @@ public class BookControllerIT {
 	@Before
 	public void setUp() {
 		template = new TestRestTemplate();
+		
 	}
 
 	@Test
