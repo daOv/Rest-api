@@ -1,17 +1,18 @@
 package com.rest.controller;
 
 import java.util.List;
-
 import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 import com.rest.model.Book;
@@ -26,7 +27,7 @@ public class BookController {
 	@Autowired
 	BookService bookService;
 
-	@RequestMapping(value = "/books", method = RequestMethod.GET)
+	@GetMapping(value = "/books")
 	public ResponseEntity<List<Book>> getAllCategories() {
 		List<Book> books = bookService.getAllBooks();
 		if (books.isEmpty()) {
@@ -35,7 +36,7 @@ public class BookController {
 		return new ResponseEntity<List<Book>>(books, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/books/{id}", method = RequestMethod.GET)
+	@GetMapping(value = "/books/{id}")
 	public ResponseEntity<Book> getBookById(@PathVariable("id") Integer id) {
 		Book book = bookService.getBookById(id);
 		if (book == null) {
@@ -44,15 +45,19 @@ public class BookController {
 		return new ResponseEntity<Book>(book, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/books", method = RequestMethod.POST)
-	public ResponseEntity<?> addBook(@RequestBody Book book, UriComponentsBuilder ucBuilder) {
+	@PostMapping(value = "/books")
+	public ResponseEntity<?> addBook(@Valid @RequestBody(required = false) Book book, UriComponentsBuilder ucBuilder) {
+		if (book == null) {
+			return new ResponseEntity(new CustomErrorType("Book object must be provided."), 
+					HttpStatus.BAD_REQUEST);
+		}
 		bookService.saveBook(book);
 		HttpHeaders headers = new HttpHeaders();
 		headers.setLocation(ucBuilder.path("/api/books/{id}").buildAndExpand(book.getId()).toUri());
 		return new ResponseEntity<String>(headers, HttpStatus.CREATED);
 	}
 
-	@RequestMapping(value = "/books/{id}", method = RequestMethod.DELETE)
+	@DeleteMapping(value = "/books/{id}")
 	public ResponseEntity<?> deleteBook(@PathVariable("id") Integer id) {
 		Book book = bookService.getBookById(id);
 		if (book == null) {
@@ -63,7 +68,7 @@ public class BookController {
 		return new ResponseEntity<BookCategory>(HttpStatus.NO_CONTENT);
 	}
 
-	@RequestMapping(value = "/books/{id}", method = RequestMethod.PUT)
+	@PutMapping(value = "/books/{id}")
 	public ResponseEntity<?> updateBook(@Valid @RequestBody Book book, @PathVariable("id") Integer id) {
 		Book currentBook = bookService.getBookById(id);
 		BookCategory currentCategory = currentBook.getBookCategory();

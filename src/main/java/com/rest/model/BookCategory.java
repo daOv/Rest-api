@@ -40,6 +40,7 @@ public class BookCategory {
 		this.id = id;
 	}
 
+	@Column(unique = true)
 	public String getName() {
 		return name;
 	}

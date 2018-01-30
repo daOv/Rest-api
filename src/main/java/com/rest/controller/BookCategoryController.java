@@ -1,17 +1,18 @@
 package com.rest.controller;
 
 import java.util.List;
-
 import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 import com.rest.model.BookCategory;
@@ -25,7 +26,7 @@ public class BookCategoryController {
 	@Autowired
 	BookCategoryService bookCategoryService;
 
-	@RequestMapping(value = "/bookCategory", method = RequestMethod.GET)
+	@GetMapping(value = "/bookCategory")
 	public ResponseEntity<List<BookCategory>> getAllBookCategories() {
 		List<BookCategory> bookCategories = bookCategoryService.getAllCategories();
 		if (bookCategories.isEmpty()) {
@@ -34,7 +35,7 @@ public class BookCategoryController {
 		return new ResponseEntity<List<BookCategory>>(bookCategories, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/bookCategory/{id}", method = RequestMethod.GET)
+	@GetMapping(value = "/bookCategory/{id}")
 	public ResponseEntity<BookCategory> getBookCategoryById(@PathVariable("id") Integer id) {
 		BookCategory bookCategory = bookCategoryService.getCategoryById(id);
 		if (bookCategory == null) {
@@ -44,15 +45,20 @@ public class BookCategoryController {
 		return new ResponseEntity<BookCategory>(bookCategory, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/bookCategory", method = RequestMethod.POST)
-	public ResponseEntity<?> addBookCategory(@Valid @RequestBody BookCategory category, UriComponentsBuilder ucBuilder) {
-		bookCategoryService.saveCategory(category);
+	@PostMapping(value = "/bookCategory")
+	public ResponseEntity<?> addBookCategory(@Valid @RequestBody(required = false) BookCategory bookCategory,
+			UriComponentsBuilder ucBuilder) {
+		if (bookCategory == null) {
+			return new ResponseEntity(new CustomErrorType("Book category object must be provided."),
+					HttpStatus.BAD_REQUEST);
+		}
+		bookCategoryService.saveCategory(bookCategory);
 		HttpHeaders headers = new HttpHeaders();
-		headers.setLocation(ucBuilder.path("/api/bookCategory/{id}").buildAndExpand(category.getId()).toUri());
+		headers.setLocation(ucBuilder.path("/api/bookCategory/{id}").buildAndExpand(bookCategory.getId()).toUri());
 		return new ResponseEntity<String>(headers, HttpStatus.CREATED);
 	}
 
-	@RequestMapping(value = "/bookCategory/{id}", method = RequestMethod.DELETE)
+	@DeleteMapping(value = "/bookCategory/{id}")
 	public ResponseEntity<?> deleteBookCategory(@PathVariable("id") Integer id) {
 		BookCategory category = bookCategoryService.getCategoryById(id);
 		if (category == null) {
@@ -64,7 +70,7 @@ public class BookCategoryController {
 		return new ResponseEntity<BookCategory>(HttpStatus.NO_CONTENT);
 	}
 
-	@RequestMapping(value = "/bookCategory/{id}", method = RequestMethod.PUT)
+	@PutMapping(value = "/bookCategory/{id}")
 	public ResponseEntity<?> updateBookCategory(@RequestBody BookCategory bookCategoryDetails,
 			@PathVariable("id") Integer id) {
 		BookCategory category = bookCategoryService.getCategoryById(id);
