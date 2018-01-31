@@ -15,9 +15,7 @@ public class Book {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "book_id")
 	private int id;
-	@NotNull
 	private String title;
-	@NotNull
 	private String description;
 
 	@NotNull
@@ -40,6 +38,12 @@ public class Book {
 		this.id = id;
 		this.title = title;
 		this.description = description;
+	}
+	
+	public Book( String title, String description, BookCategory bookCategory) {
+		this.title = title;
+		this.description = description;
+		this.bookCategory = bookCategory;
 	}
 
 	public int getId() {

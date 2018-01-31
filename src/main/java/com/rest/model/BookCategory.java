@@ -19,6 +19,9 @@ public class BookCategory {
 	public BookCategory() {
 
 	}
+	public BookCategory(int id) {
+		this.id = id;
+	}
 
 	public BookCategory(int id, String name) {
 		this.id = id;

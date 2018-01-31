@@ -1,6 +1,3 @@
-insert into book_category(name) values('roman');
-insert into book_category(name) values('novela');
-
-insert into book(description,title,category_id_fk) values('good ','Book1',1);
-insert into book(description,title,category_id_fk) values('bad','Book2',1);
-insert into book(description,title,category_id_fk) values('boring','Book3',2);
+insert into book_category(name) values('testCategory');
+insert into book_category(name) values('secondCategory');
+insert into book(description,title,category_id_fk) values('test book ','testBook',1);

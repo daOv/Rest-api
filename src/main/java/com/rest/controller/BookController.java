@@ -48,8 +48,7 @@ public class BookController {
 	@PostMapping(value = "/books")
 	public ResponseEntity<?> addBook(@Valid @RequestBody(required = false) Book book, UriComponentsBuilder ucBuilder) {
 		if (book == null) {
-			return new ResponseEntity(new CustomErrorType("Book object must be provided."), 
-					HttpStatus.BAD_REQUEST);
+			return new ResponseEntity(new CustomErrorType("Book object must be provided."), HttpStatus.BAD_REQUEST);
 		}
 		bookService.saveBook(book);
 		HttpHeaders headers = new HttpHeaders();
@@ -69,21 +68,24 @@ public class BookController {
 	}
 
 	@PutMapping(value = "/books/{id}")
-	public ResponseEntity<?> updateBook(@Valid @RequestBody Book book, @PathVariable("id") Integer id) {
+	public ResponseEntity<?> updateBook(@Valid @RequestBody(required = false) Book book,
+			@PathVariable("id") Integer id) {
 		Book currentBook = bookService.getBookById(id);
-		BookCategory currentCategory = currentBook.getBookCategory();
 		if (currentBook == null) {
 			return new ResponseEntity(new CustomErrorType("Unable to upate. Book with id " + id + " not found."),
 					HttpStatus.NOT_FOUND);
 		}
-		currentBook.setId(id);
-		currentBook.setDescription(book.getDescription());
-		currentBook.setTitle(book.getTitle());
-		if (book.getBookCategory().getId() != 0) {
-			currentCategory.setId(book.getBookCategory().getId());
+		if (book.getId() != 0) {
+			currentBook.setId(id);
 		}
-		if (!book.getBookCategory().getName().equals(null)) {
-			currentCategory.setName(book.getBookCategory().getName());
+		if (book.getDescription() != null) {
+			currentBook.setDescription(book.getDescription());
+		}
+		if (book.getTitle() != null) {
+			currentBook.setTitle(book.getTitle());
+		}
+		if (!currentBook.getBookCategory().equals(null)) {
+			currentBook.setBookCategory(book.getBookCategory());
 		}
 
 		bookService.saveBook(currentBook);
