@@ -34,6 +34,7 @@ public class BookControllerIT {
 
 	static HttpHeaders headers;
 	HttpEntity<Book> requestEntity;
+	String resurceLocation;
 
 	@BeforeClass
 	public static void beforeClassMethod() {
@@ -43,7 +44,7 @@ public class BookControllerIT {
 
 	@Before
 	public void setUp() {
-
+		requestEntity = new HttpEntity<Book>(new Book("testTitle", "testDescription", new BookCategory(1)));
 	}
 
 	@Test
@@ -62,23 +63,18 @@ public class BookControllerIT {
 
 	@Test
 	public void createBook() {
-		requestEntity = new HttpEntity<Book>(new Book(2, "myTitle", "myDescription", new BookCategory(1)));
-		HttpEntity<Book> postResponse = template.postForEntity(createUrl("/api/books"), requestEntity, Book.class);
-		ResponseEntity<Book> getResponse = template.getForEntity(createUrl("/api/books/2"), Book.class);
-		assertEquals("myDescription", getResponse.getBody().getDescription());
-		String actual = postResponse.getHeaders().getLocation().toString();
-		assertThat(actual, containsString("api/books/2"));
-		assertThat(actual,startsWith("http://localhost:"));
+		resurceLocation = template.postForLocation(createUrl("/api/books"), requestEntity, Book.class).toString();
+		ResponseEntity<Book> getResponse = template.getForEntity(resurceLocation, Book.class);
+		assertEquals("testDescription", getResponse.getBody().getDescription());
+		assertThat(resurceLocation, containsString("api/books/"));
 	}
 
 	@Test
 	public void updateBook()  {
-		requestEntity = new HttpEntity<Book>(new Book("TestBook", "Book for testing", new BookCategory(1)));
-		URI postResponse = template.postForLocation(createUrl("/api/books"), requestEntity, Book.class);
-		ResponseEntity<Book> getResponse = template.getForEntity(postResponse, Book.class);
+		resurceLocation = template.postForLocation(createUrl("/api/books"), requestEntity, Book.class).toString();
 		HttpEntity<Book> putEntity = new HttpEntity<>(new Book("updatedBook","updatedDescription",new BookCategory(2)));
-		template.put(postResponse.toString(),putEntity);
-		ResponseEntity<Book> getResponseAfterUpdate = template.getForEntity(postResponse, Book.class);
+		template.put(resurceLocation,putEntity);
+		ResponseEntity<Book> getResponseAfterUpdate = template.getForEntity(resurceLocation, Book.class);
 		assertThat(getResponseAfterUpdate.getBody().getDescription(),containsString("updatedDescription"));
 	}
 
@@ -89,9 +85,7 @@ public class BookControllerIT {
 		String expected = "{\"errorMessage\":\"Book with id 2 not found.\"}";
 		JSONAssert.assertEquals(expected, response.getBody(), false);
 	}
-
-
-
+	
 	private String createUrl(String uri) {
 		return LOCAL_HOST + port + uri;
 	}
