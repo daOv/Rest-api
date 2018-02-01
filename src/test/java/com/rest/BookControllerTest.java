@@ -56,7 +56,7 @@ public class BookControllerTest {
 		String expected = "{'id':1,'title':'Book','description':'good Book'}";
 		JSONAssert.assertEquals(expected, result.getResponse().getContentAsString(), false);
 
-		MvcResult(bookService.getBookById(244)).th
+
 	}
 	
 }
