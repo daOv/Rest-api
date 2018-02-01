@@ -1,5 +1,6 @@
 package com.rest;
 
+import com.rest.utils.CustomFileReader;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -16,30 +17,28 @@ import com.rest.model.Book;
 import com.rest.model.BookCategory;
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.startsWith;
 import org.json.JSONException;
-
-import java.net.URI;
+import java.io.IOException;
 
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @RunWith(SpringRunner.class)
 public class BookControllerIT {
 
-	private static  TestRestTemplate template;
-
 	@LocalServerPort
 	private int port;
-
+	private static  TestRestTemplate template;
+	private static HttpHeaders headers;
+	private HttpEntity<Book> requestEntity;
+	private String resurceLocation;
 	private static final String LOCAL_HOST = "http://localhost:";
-
-	static HttpHeaders headers;
-	HttpEntity<Book> requestEntity;
-	String resurceLocation;
+	private static final String BOOK_LIST_JSON_LOCATION = "json/expected_book_list.json";
+	private static CustomFileReader fileReader;
 
 	@BeforeClass
 	public static void beforeClassMethod() {
 		template = new TestRestTemplate();
 		headers = new HttpHeaders();
+		fileReader = new CustomFileReader();
 	}
 
 	@Before
@@ -49,8 +48,10 @@ public class BookControllerIT {
 
 	@Test
 	public void retriveBooks() throws Exception {
-		String expected = "[{\"id\": 1,\"title\": \"testBook\",\"description\": \"test book \",\"bookCategory\": {\"id\": 1,\"name\": \"testCategory\"}}]";
+		String expected = fileReader.readFile(BOOK_LIST_JSON_LOCATION);
+		System.out.println(expected);
 		ResponseEntity<String> response = template.getForEntity(createUrl("api/books"), String.class);
+		System.out.println(response.getBody());
 		JSONAssert.assertEquals(expected, response.getBody(), false);
 	}
 
@@ -70,7 +71,7 @@ public class BookControllerIT {
 	}
 
 	@Test
-	public void updateBook()  {
+	public void updateBook() throws IOException {
 		resurceLocation = template.postForLocation(createUrl("/api/books"), requestEntity, Book.class).toString();
 		HttpEntity<Book> putEntity = new HttpEntity<>(new Book("updatedBook","updatedDescription",new BookCategory(2)));
 		template.put(resurceLocation,putEntity);
@@ -85,7 +86,7 @@ public class BookControllerIT {
 		String expected = "{\"errorMessage\":\"Book with id 2 not found.\"}";
 		JSONAssert.assertEquals(expected, response.getBody(), false);
 	}
-	
+
 	private String createUrl(String uri) {
 		return LOCAL_HOST + port + uri;
 	}
