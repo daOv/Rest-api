@@ -75,20 +75,9 @@ public class BookController {
 			return new ResponseEntity(new CustomErrorType("Unable to upate. Book with id " + id + " not found."),
 					HttpStatus.NOT_FOUND);
 		}
-		if (book.getId() != 0) {
-			currentBook.setId(id);
-		}
-		if (book.getDescription() != null) {
-			currentBook.setDescription(book.getDescription());
-		}
-		if (book.getTitle() != null) {
-			currentBook.setTitle(book.getTitle());
-		}
-		if (!currentBook.getBookCategory().equals(null)) {
-			currentBook.setBookCategory(book.getBookCategory());
-		}
-
-		bookService.saveBook(currentBook);
-		return new ResponseEntity<Book>(currentBook, HttpStatus.OK);
+		book.setId(id);
+		book.getBookCategory().setName(currentBook.getBookCategory().getName());
+		bookService.saveBook(book);
+		return new ResponseEntity<Book>(book, HttpStatus.OK);
 	}
 }
