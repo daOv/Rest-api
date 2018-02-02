@@ -32,13 +32,14 @@ public class BookControllerIT {
 	private String resurceLocation;
 	private static final String LOCAL_HOST = "http://localhost:";
 	private static final String BOOK_LIST_JSON_LOCATION = "json/expected_book_list.json";
-	private static CustomFileReader fileReader;
+	private static final String BOOK_JSON_LOCATION = "json/expected_book.json";
+	private static CustomFileReader customFileReader;
 
 	@BeforeClass
 	public static void beforeClassMethod() {
 		template = new TestRestTemplate();
 		headers = new HttpHeaders();
-		fileReader = new CustomFileReader();
+		customFileReader = new CustomFileReader();
 	}
 
 	@Before
@@ -48,7 +49,7 @@ public class BookControllerIT {
 
 	@Test
 	public void retriveBooks() throws Exception {
-		String expected = fileReader.readFile(BOOK_LIST_JSON_LOCATION);
+		String expected = customFileReader.readFile(BOOK_LIST_JSON_LOCATION);
 		System.out.println(expected);
 		ResponseEntity<String> response = template.getForEntity(createUrl("api/books"), String.class);
 		System.out.println(response.getBody());
@@ -57,7 +58,7 @@ public class BookControllerIT {
 
 	@Test
 	public void retriveBookById() throws Exception {
-		String expected = "{\"id\": 1,\"title\": \"testBook\",\"description\": \"test book \",\"bookCategory\": {\"id\": 1,\"name\": \"testCategory\"}}";
+		String expected = customFileReader.readFile(BOOK_JSON_LOCATION);
 		ResponseEntity<String> response = template.getForEntity(createUrl("api/books/1"), String.class);
 		JSONAssert.assertEquals(expected, response.getBody(), false);
 	}
