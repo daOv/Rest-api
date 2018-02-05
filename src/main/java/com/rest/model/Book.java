@@ -15,17 +15,16 @@ public class Book {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "book_id")
 	private int id;
+	@NotNull(message = "title can not be null.")
 	private String title;
+	@NotNull(message = "description can not be null.")
 	private String description;
-
-	@NotNull
+	@NotNull(message = "category can not be null.")
 	@ManyToOne
 	@JoinColumn(name = "category_id_fk", referencedColumnName = "category_id")
 	private BookCategory bookCategory;
 
-	public Book() {
-
-	}
+	public Book() {}
 
 	public Book(int id, String title, String description, BookCategory bookCategory) {
 		this.id = id;

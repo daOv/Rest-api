@@ -11,5 +11,4 @@ public class CustomFileReader {
       String data = FileUtils.readFileToString(file,"UTF-8");
       return data;
     }
-
 }

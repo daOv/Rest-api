@@ -39,17 +39,11 @@ public class BookController {
 	@GetMapping(value = "/books/{id}")
 	public ResponseEntity<Book> getBookById(@PathVariable("id") Integer id) {
 		Book book = bookService.getBookById(id);
-		if (book == null) {
-			return new ResponseEntity(new CustomErrorType("Book with id " + id + " not found."), HttpStatus.NOT_FOUND);
-		}
 		return new ResponseEntity<Book>(book, HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/books")
-	public ResponseEntity<?> addBook(@Valid @RequestBody(required = false) Book book, UriComponentsBuilder ucBuilder) {
-		if (book == null) {
-			return new ResponseEntity(new CustomErrorType("Book object must be provided."), HttpStatus.BAD_REQUEST);
-		}
+	public ResponseEntity<?> addBook(@Valid @RequestBody Book book, UriComponentsBuilder ucBuilder) {
 		bookService.saveBook(book);
 		HttpHeaders headers = new HttpHeaders();
 		headers.setLocation(ucBuilder.path("/api/books/{id}").buildAndExpand(book.getId()).toUri());
@@ -58,23 +52,13 @@ public class BookController {
 
 	@DeleteMapping(value = "/books/{id}")
 	public ResponseEntity<?> deleteBook(@PathVariable("id") Integer id) {
-		Book book = bookService.getBookById(id);
-		if (book == null) {
-			return new ResponseEntity(new CustomErrorType("Unable to delete. Book with id " + id + " not found."),
-					HttpStatus.NOT_FOUND);
-		}
 		bookService.deleteBook(id);
 		return new ResponseEntity<BookCategory>(HttpStatus.NO_CONTENT);
 	}
 
 	@PutMapping(value = "/books/{id}")
-	public ResponseEntity<?> updateBook(@Valid @RequestBody(required = false) Book book,
-			@PathVariable("id") Integer id) {
+	public ResponseEntity<?> updateBook(@Valid @RequestBody Book book, @PathVariable("id") Integer id) {
 		Book currentBook = bookService.getBookById(id);
-		if (currentBook == null) {
-			return new ResponseEntity(new CustomErrorType("Unable to upate. Book with id " + id + " not found."),
-					HttpStatus.NOT_FOUND);
-		}
 		book.setId(id);
 		book.getBookCategory().setName(currentBook.getBookCategory().getName());
 		bookService.saveBook(book);
